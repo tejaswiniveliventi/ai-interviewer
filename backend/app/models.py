@@ -10,3 +10,12 @@ class InterviewStartRequest(BaseModel):
 class InterviewStartResponse(BaseModel):
     session_id: str
     question: str
+
+class InterviewAnswerRequest(BaseModel):
+    session_id: str
+    answer: str
+
+
+class InterviewAnswerResponse(BaseModel):
+    feedback: str
+    next_question: str

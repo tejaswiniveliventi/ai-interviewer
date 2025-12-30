@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from app.models import InterviewStartRequest, InterviewStartResponse
-from app.state import create_session
-from app.interview import generate_first_question
+from app.models import InterviewStartRequest, InterviewStartResponse,InterviewAnswerRequest, InterviewAnswerResponse
+from app.state import create_session,get_session
+from app.interview import generate_first_question,evaluate_answer
 
 app = FastAPI(
     title="AI Interviewer",
@@ -23,4 +23,30 @@ def start_interview(request: InterviewStartRequest):
     return {
         "session_id": session["session_id"],
         "question": question
+    }
+@app.post("/interview/answer", response_model=InterviewAnswerResponse)
+def answer_interview(request: InterviewAnswerRequest):
+    session = get_session(request.session_id)
+
+    if not session:
+        return {"feedback": "Invalid session", "next_question": ""}
+
+    evaluation = evaluate_answer(session, request.answer)
+
+    # Update session
+    session["questions_asked"] += 1
+    session["difficulty"] = (
+        "hard" if evaluation["difficulty"] == "increase"
+        else "easy" if evaluation["difficulty"] == "decrease"
+        else session["difficulty"]
+    )
+
+    session["history"].append({
+        "answer": request.answer,
+        "feedback": evaluation["feedback"]
+    })
+
+    return {
+        "feedback": evaluation["feedback"],
+        "next_question": evaluation["next_question"]
     }

@@ -20,3 +20,5 @@ def create_session(role: str, experience: str) -> dict:
 
     interview_sessions[session_id] = session
     return session
+def get_session(session_id: str) -> dict:
+    return interview_sessions.get(session_id)

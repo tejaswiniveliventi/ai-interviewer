@@ -28,3 +28,30 @@ The question should:
 - Reveal depth of Salesforce experience
 - Not be yes/no
 """
+EVALUATE_ANSWER_PROMPT = """
+Candidate answer:
+"{answer}"
+
+Context:
+- Role: {role}
+- Experience: {experience}
+- Current difficulty: {difficulty}
+- Questions asked so far: {questions_asked}
+
+Evaluate the answer based on:
+1. Correctness
+2. Depth
+3. Clarity
+
+Then:
+- Provide brief constructive feedback
+- Decide whether to ask a follow-up or move to a new topic
+- Adjust difficulty if needed
+
+Respond ONLY in valid JSON:
+{{
+  "feedback": "...",
+  "next_question": "...",
+  "difficulty": "increase | same | decrease"
+}}
+"""
